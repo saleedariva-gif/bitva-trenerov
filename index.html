@@ -7,22 +7,11 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 :root{
-  --bg:#000000;
-  --card:#1C1B22;
-  --card2:#232230;
-  --chip:#332342;
-  --line:#2E2B3A;
-  --violet:#AB55F6;
-  --violet-2:#8B5CF6;
-  --magenta:#C026D3;
-  --deep:#562771;
-  --text:#FFFFFF;
-  --muted:#8E8E96;
-  --gold:#FFC93C;
-  --green:#34C759;
-  --red:#FF4E4E;
-  --nav:#131418;
-  --r:18px;
+  --bg:#000; --card:#1C1B22; --card2:#232230; --chip:#332342; --line:#2E2B3A;
+  --violet:#AB55F6; --violet-2:#8B5CF6; --magenta:#C026D3;
+  --pink:#C34DFF;               /* замер с макета: выбранная категория */
+  --deep:#562771; --text:#FFF; --muted:#8E8E96;
+  --gold:#FFC93C; --green:#34C759; --red:#FF4E4E; --nav:#131418; --r:18px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
 html,body{height:100%;overflow:hidden;overscroll-behavior:none}
@@ -31,10 +20,9 @@ body{background:var(--bg);color:var(--text);
   display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
 .num{font-variant-numeric:tabular-nums;font-weight:800}
 
-/* ---- header ---- */
 header{display:flex;align-items:center;justify-content:center;position:relative;padding:12px 16px 8px}
 header .title{text-align:center;line-height:1.15}
-header .t1{font-size:16px;font-weight:800;letter-spacing:.02em}
+header .t1{font-size:16px;font-weight:800}
 header .t2{font-size:10px;color:var(--muted)}
 header .back{position:absolute;left:16px;font-size:14px;color:var(--violet);display:none;cursor:pointer;padding:6px}
 header.subpage .back{display:block}
@@ -43,15 +31,12 @@ main{flex:1;position:relative;overflow:hidden}
 .screen{position:absolute;inset:0;display:none;flex-direction:column;overflow-y:auto;padding:0 14px 20px}
 .screen.active{display:flex}
 
-/* ---- банер + событие ---- */
+/* ---- главная ---- */
 .banner{width:100%;border-radius:14px;display:block;margin-bottom:10px}
 .event{
   border-radius:var(--r);padding:12px 14px;margin-bottom:10px;cursor:pointer;
-  background:
-    radial-gradient(120% 160% at 50% 0%, rgba(171,85,246,.55) 0%, rgba(112,54,146,.35) 35%, rgba(35,34,48,0) 70%),
-    var(--card2);
-  border:1px solid var(--line);
-  display:flex;gap:12px;align-items:center;
+  background:radial-gradient(120% 160% at 50% 0%, rgba(171,85,246,.55) 0%, rgba(112,54,146,.35) 35%, rgba(35,34,48,0) 70%),var(--card2);
+  border:1px solid var(--line);display:flex;gap:12px;align-items:center;
 }
 .event .when{font-weight:800;font-size:15px;line-height:1.2;white-space:nowrap}
 .event .when small{display:block;font-weight:600;color:#E6D5FF;font-size:12px}
@@ -59,41 +44,26 @@ main{flex:1;position:relative;overflow:hidden}
 .event .what .names{display:flex;gap:6px;margin:5px 0 4px;flex-wrap:wrap}
 .event .tag{font-size:11px;font-weight:700;background:rgba(255,255,255,.14);border-radius:7px;padding:2px 8px}
 .event .hint{font-size:10.5px;color:#CDB8E8}
-
-/* ---- чипы статов ---- */
 .chips{display:flex;gap:8px;margin-bottom:14px}
 .chip{background:var(--chip);border-radius:14px;padding:8px 10px;flex:1.35;cursor:pointer}
 .chip .lb{font-size:10.5px;color:#C9BFDD;white-space:nowrap}
 .chip .vl{font-size:13px;font-weight:800;margin-top:2px}
-.chip .vl span{color:var(--gold)}
 .chip.icon{flex:.8;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
 .chip.icon .ic{font-size:17px}
 .chip.icon .lb{font-size:9.5px}
-
-/* ---- счётчик и тапалка ---- */
 .counter{display:flex;align-items:center;justify-content:center;gap:8px;margin:2px 0 4px}
-.counter .v{font-size:38px;font-weight:800;letter-spacing:.01em}
+.counter .v{font-size:38px;font-weight:800}
 .counter .c{font-size:24px}
 .tap-wrap{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;position:relative}
-.tap{
-  --size:min(76vw,320px);
-  width:var(--size);height:var(--size);border-radius:50%;position:relative;cursor:pointer;
-  transition:transform .06s ease;
-}
+.tap{--size:min(76vw,320px);width:var(--size);height:var(--size);border-radius:50%;position:relative;cursor:pointer;transition:transform .06s}
 .tap:active{transform:scale(.965)}
-.tap img{width:100%;height:100%;border-radius:50%;display:block;pointer-events:none;
-  filter:drop-shadow(0 0 44px rgba(171,85,246,.45))}
-.tap .badge{
-  position:absolute;left:50%;bottom:11%;transform:translateX(-50%);
-  background:var(--gold);color:#000;font-weight:900;font-size:16px;
-  min-width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  border:3px solid #000;pointer-events:none;
-}
+.tap img{width:100%;height:100%;border-radius:50%;display:block;pointer-events:none;filter:drop-shadow(0 0 44px rgba(171,85,246,.45))}
+.tap .badge{position:absolute;left:50%;bottom:11%;transform:translateX(-50%);background:var(--gold);color:#000;
+  font-weight:900;font-size:16px;min-width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;border:3px solid #000;pointer-events:none}
 .float{position:absolute;font-size:26px;font-weight:900;color:#fff;pointer-events:none;z-index:5;
   text-shadow:0 2px 12px rgba(171,85,246,.9);animation:fl .8s ease-out forwards}
 @keyframes fl{to{opacity:0;transform:translateY(-110px) scale(1.2)}}
-
-/* ---- ранг ---- */
 .rank{margin-top:2px}
 .rank .top{display:flex;align-items:center;gap:10px}
 .rank .skull{font-size:26px;filter:drop-shadow(0 0 10px rgba(171,85,246,.8))}
@@ -103,8 +73,9 @@ main{flex:1;position:relative;overflow:hidden}
 .rank .fill{height:100%;border-radius:999px;background:linear-gradient(90deg,#3B82F6,var(--violet),var(--magenta))}
 .rank .sub{display:flex;justify-content:space-between;font-size:11px;color:var(--muted)}
 
-/* ---- generic ---- */
+/* ---- общие ---- */
 .h2{font-size:20px;font-weight:800;margin:14px 2px 4px}
+.h3{font-size:14px;font-weight:800;margin:12px 2px 8px}
 .sub2{font-size:12px;color:var(--muted);margin:0 2px 12px}
 .card{background:var(--card);border-radius:var(--r);padding:12px 14px;margin-bottom:9px;display:flex;align-items:center;gap:12px}
 .card .ic{width:42px;height:42px;border-radius:13px;background:var(--chip);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
@@ -112,7 +83,6 @@ main{flex:1;position:relative;overflow:hidden}
 .card .tt{font-size:14px;font-weight:700}
 .card .ds{font-size:11.5px;color:var(--muted);margin-top:1px}
 .amount{font-weight:800;font-size:13px;color:var(--violet);white-space:nowrap}
-.amount.g{color:var(--gold)}
 .btn{background:linear-gradient(135deg,var(--violet-2),var(--magenta));color:#fff;border:none;border-radius:13px;
   padding:10px 16px;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap}
 .btn:active{filter:brightness(.8)}
@@ -124,36 +94,69 @@ main{flex:1;position:relative;overflow:hidden}
 .tab{flex:1;text-align:center;font-size:12.5px;font-weight:700;padding:9px;border-radius:12px;background:var(--card);color:var(--muted);cursor:pointer}
 .tab.on{background:linear-gradient(135deg,var(--violet-2),var(--magenta));color:#fff}
 .pill{font-size:10px;font-weight:700;background:var(--chip);color:#D9C6F5;border-radius:7px;padding:2px 7px}
-
-/* аватар кружок */
 .ava{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--violet-2),var(--deep));
   display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
 .ava.sm{width:36px;height:36px;font-size:16px}
 
-/* донаты: сетки аватаров */
-.people{display:flex;gap:14px;margin:6px 0 14px}
-.person{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;width:64px}
-.person .ava{width:52px;height:52px;font-size:24px;border:2px solid transparent}
-.person.sel .ava{border-color:var(--violet);box-shadow:0 0 14px rgba(171,85,246,.55)}
+/* горизонтальные свайп-ленты */
+.hscroll{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;
+  margin:0 -14px 12px;padding:2px 14px 6px;scrollbar-width:none}
+.hscroll::-webkit-scrollbar{display:none}
+.hscroll>*{scroll-snap-align:center;flex-shrink:0}
+
+/* ---- донаты ---- */
+.people{display:flex;gap:14px;margin:6px 0 14px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px}
+.people::-webkit-scrollbar{display:none}
+.person{display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;min-width:64px;position:relative}
+.person .ava{width:52px;height:52px;font-size:24px;border:2.5px solid transparent}
+.person.sel .ava{border-color:var(--green);box-shadow:0 0 14px rgba(52,199,89,.5)}
+.person.sel::after{content:'✓';position:absolute;top:34px;right:2px;width:18px;height:18px;border-radius:50%;
+  background:var(--green);color:#fff;font-size:11px;font-weight:900;display:flex;align-items:center;justify-content:center;border:2px solid #000}
 .person .nm{font-size:10.5px;color:var(--muted);text-align:center;line-height:1.15}
 .input{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:15px;padding:13px 14px;margin:4px 0 8px}
 .input input{flex:1;background:none;border:none;outline:none;color:#fff;font-size:17px;font-weight:800;min-width:0}
 .input .ok{color:var(--green);font-size:17px}
 
-/* споры */
-.vs-card{background:linear-gradient(160deg,#3A1E52,#1C1B22 70%);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:10px}
-.vs-card .q{font-size:14px;font-weight:700;text-align:center;margin-bottom:12px}
+/* ---- голосования: широкие карточки событий ---- */
+.ev-card{width:82vw;max-width:330px;border-radius:var(--r);overflow:hidden;cursor:pointer;
+  border:1.5px solid var(--line);background:var(--card)}
+.ev-card.on{border-color:var(--violet);box-shadow:0 0 18px rgba(171,85,246,.35)}
+.ev-card .img{height:110px;display:flex;align-items:center;justify-content:center;font-size:44px;
+  background:linear-gradient(135deg,#3A1E52,#1a1a24 70%)}
+.ev-card .img.ph::after{content:'фото позже';font-size:10px;color:var(--muted);position:absolute;margin-top:64px}
+.ev-card .cap{padding:10px 12px}
+.ev-card .cap .tt{font-size:14px;font-weight:800}
+.ev-card .cap .ds{font-size:11px;color:var(--muted);margin-top:2px}
+
+/* ---- споры: карусель ---- */
+.vs-card{width:84vw;max-width:340px;background:linear-gradient(160deg,#3A1E52,#1C1B22 70%);
+  border:1.5px solid var(--violet);border-radius:var(--r);padding:16px;position:relative}
+.vs-card .q{font-size:14px;font-weight:700;text-align:center;margin-bottom:12px;min-height:52px}
 .vs-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .vs-row .fighter{display:flex;flex-direction:column;align-items:center;gap:5px;width:80px}
+.vs-row .fighter .nm{font-size:11px;color:var(--muted)}
 .vs-row .stake{font-size:22px;font-weight:900;color:var(--gold)}
 .vote2{display:flex;gap:10px;margin-top:14px}
 .vote2 .btn{flex:1}
 .vote2 .btn.against{background:var(--card2)}
+.vs-dots{display:flex;justify-content:center;gap:6px;margin:2px 0 12px}
+.vs-dots i{width:6px;height:6px;border-radius:50%;background:var(--line)}
+.vs-dots i.on{background:var(--violet)}
 .results{display:flex;justify-content:space-between;align-items:center;background:var(--card);border-radius:var(--r);padding:13px 16px}
 .results .r{font-size:22px;font-weight:900}
 .results .r span{color:var(--muted);font-weight:700}
 
-/* прокачка */
+/* ---- прокачка ---- */
+.qr-row{display:flex;gap:10px;margin-bottom:14px}
+.qr-tile{flex:1;aspect-ratio:1;border-radius:16px;padding:8px;
+  background:linear-gradient(160deg,var(--violet-2),var(--magenta));display:flex;align-items:center;justify-content:center}
+.qr-tile .inner{width:100%;height:100%;border-radius:10px;background:
+  repeating-linear-gradient(0deg,#fff 0 6px,#000 6px 12px),repeating-linear-gradient(90deg,#fff 0 6px,#000 6px 12px);
+  background-blend-mode:difference}
+.qr-tile.mist{background:var(--card);border:1.5px dashed var(--line);color:var(--muted);font-size:26px;font-weight:800}
+.cats{margin-bottom:12px}
+.cat{padding:9px 16px;border-radius:12px;font-size:12.5px;font-weight:800;background:var(--card);color:var(--muted);cursor:pointer;white-space:nowrap}
+.cat.on{background:var(--pink);color:#fff;box-shadow:0 0 16px rgba(195,77,255,.5)}
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
 .pump{background:var(--card);border-radius:var(--r);padding:12px;cursor:pointer;position:relative}
 .pump .em{font-size:26px}
@@ -163,44 +166,69 @@ main{flex:1;position:relative;overflow:hidden}
 .pump .pr{margin-top:8px;font-size:11.5px;font-weight:800;color:var(--violet)}
 .pump .lvl{position:absolute;top:9px;right:10px;font-size:10px;color:var(--muted)}
 .pump.locked{opacity:.45}
-.energy-line{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:var(--r);padding:12px 14px;margin:10px 0}
-.energy-line .bar{flex:1;height:9px;border-radius:99px;background:var(--card2);overflow:hidden}
-.energy-line .fill{height:100%;background:linear-gradient(90deg,var(--violet),var(--gold))}
+/* энергия + банка спонсора */
+.energy-zone{display:flex;align-items:center;gap:14px;margin:16px 0 8px}
+.energy-left{flex:1}
+.energy-left .bolt{font-size:34px;color:var(--violet);filter:drop-shadow(0 0 12px rgba(171,85,246,.9))}
+.energy-left .val{font-size:20px;font-weight:900;color:var(--pink);margin-top:2px}
+.energy-left .cap{font-size:11px;color:var(--muted)}
+.can-wrap{position:relative;width:118px;height:118px;cursor:pointer}
+.can-wrap img{width:100%;height:100%;border-radius:50%;animation:canShake 2.4s ease-in-out infinite;
+  filter:drop-shadow(0 0 22px rgba(171,85,246,.7))}
+@keyframes canShake{
+  0%,100%{transform:rotate(0)} 6%{transform:rotate(-6deg)} 12%{transform:rotate(5deg)}
+  18%{transform:rotate(-4deg)} 24%{transform:rotate(3deg)} 30%{transform:rotate(0)} }
+.can-wrap .z{position:absolute;font-size:17px;animation:zap 1.1s ease-in-out infinite;pointer-events:none;
+  text-shadow:0 0 8px #C34DFF}
+.can-wrap .z1{top:-6px;left:6px}
+.can-wrap .z2{top:22px;right:-10px;animation-delay:.35s}
+.can-wrap .z3{bottom:-2px;left:-8px;animation-delay:.7s}
+.can-wrap .z4{bottom:16px;right:4px;animation-delay:.5s;font-size:13px}
+@keyframes zap{0%,100%{opacity:0;transform:scale(.6)}45%,60%{opacity:1;transform:scale(1.15)}}
+.can-lb{text-align:center;font-size:10px;color:var(--muted);margin-top:4px;width:118px}
+@media (prefers-reduced-motion:reduce){.can-wrap img,.can-wrap .z{animation:none}}
 
-/* обменник ACT */
+/* ---- ACT: свап и NFT ---- */
 .swap{background:var(--card);border-radius:var(--r);padding:16px;margin-bottom:12px}
 .swap .row{display:flex;align-items:center;justify-content:space-between;padding:10px 0}
 .swap .cur{display:flex;align-items:center;gap:8px;font-weight:800;font-size:16px}
-.swap .mid{display:flex;justify-content:center;color:var(--violet);font-size:20px;padding:2px 0}
 .swap input{background:var(--card2);border:none;outline:none;border-radius:11px;color:#fff;
   font-size:16px;font-weight:800;padding:9px 12px;width:110px;text-align:right}
+.swap-mid{display:flex;justify-content:center;padding:2px 0}
+.swap-btn{width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--violet-2),var(--magenta));color:#fff;font-size:20px;
+  display:flex;align-items:center;justify-content:center;transition:transform .45s cubic-bezier(.6,0,.3,1.4);
+  box-shadow:0 0 16px rgba(171,85,246,.5)}
+.swap-btn.spin{transform:rotate(540deg)}
+.sp-card{width:64vw;max-width:250px;background:var(--card);border-radius:var(--r);padding:12px}
+.sp-card .ic{width:100%;height:86px;border-radius:12px;background:var(--chip);
+  display:flex;align-items:center;justify-content:center;font-size:38px;margin-bottom:8px}
+.sp-card .tt{font-size:13px;font-weight:800}
+.sp-card .ds{font-size:11px;color:var(--muted);margin:2px 0 8px}
+.sp-card .btn{width:100%;padding:9px}
+.nft-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:4px}
+.nft{aspect-ratio:1;border-radius:16px;position:relative;overflow:hidden;display:flex;align-items:flex-end}
+.nft .em{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:52px;
+  text-shadow:0 4px 18px rgba(0,0,0,.6)}
+.nft .tag{width:100%;padding:6px 9px;font-size:10px;font-weight:800;background:rgba(0,0,0,.45);backdrop-filter:blur(4px)}
+.nft.n1{background:conic-gradient(from 40deg,#C34DFF,#3B82F6,#C026D3,#C34DFF)}
+.nft.n2{background:radial-gradient(circle at 30% 30%,#FFC93C,#C026D3 70%)}
+.nft.n3{background:linear-gradient(160deg,#34C759,#0E7490 60%,#1E1B4B)}
+.nft.n4{background:conic-gradient(from 200deg,#FF4E4E,#C34DFF,#111,#FF4E4E)}
 
-/* QR блок */
-.qr{background:var(--card);border-radius:var(--r);padding:16px;text-align:center;margin-top:6px}
-.qr .box{width:120px;height:120px;margin:8px auto;border-radius:14px;background:
-  repeating-linear-gradient(0deg,#fff 0 8px,#000 8px 16px),
-  repeating-linear-gradient(90deg,#fff 0 8px,#000 8px 16px);
-  background-blend-mode:difference;border:6px solid #fff}
-.qr .ds{font-size:11.5px;color:var(--muted)}
-
-/* nav */
 nav{display:flex;background:var(--nav);border-top:1px solid #1E1F26;padding:7px 4px calc(9px + env(safe-area-inset-bottom))}
 .ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;color:var(--muted);cursor:pointer}
 .ni .ic{font-size:20px}
 .ni .lb{font-size:9.5px;font-weight:700}
 .ni.on{color:var(--violet)}
-
 #toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(16px);background:var(--card2);
   border:1px solid var(--line);border-radius:13px;padding:10px 16px;font-size:13px;font-weight:600;opacity:0;
   transition:all .25s;z-index:60;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* онбординг */
 #onboard{position:fixed;inset:0;background:var(--bg);z-index:50;display:none;flex-direction:column;padding:26px 16px;overflow-y:auto}
 #onboard .logo{text-align:center;margin-bottom:6px}
-#onboard .logo .l1{font-size:30px;font-weight:900;letter-spacing:.01em}
-#onboard .logo .l1 em{font-style:normal;background:linear-gradient(90deg,var(--violet),var(--magenta));
-  -webkit-background-clip:text;background-clip:text;color:transparent}
+#onboard .logo .l1{font-size:30px;font-weight:900}
+#onboard .logo .l1 em{font-style:normal;background:linear-gradient(90deg,var(--violet),var(--magenta));-webkit-background-clip:text;background-clip:text;color:transparent}
 #onboard .logo .l2{font-size:11px;color:var(--muted);letter-spacing:.32em;margin-top:4px}
 #onboard .lead{text-align:center;font-size:13px;color:var(--muted);line-height:1.55;margin:10px 0 20px}
 </style>
@@ -281,14 +309,9 @@ nav{display:flex;background:var(--nav);border-top:1px solid #1E1F26;padding:7px 
   <!-- ГОЛОСОВАНИЯ -->
   <section class="screen" id="s-votes">
     <div class="h2">Голосования</div>
-    <p class="sub2">Голос стоит очки действия (⚡ ACT) — влияй на события шоу осознанно.</p>
-    <div class="event" style="cursor:default">
-      <div class="when">20.12<small>19:00</small></div>
-      <div class="what">
-        <div class="q">Экстремальный бокс — кто следующий выйдет на ринг?</div>
-        <div class="hint">Голосование закроется за час до эфира</div>
-      </div>
-    </div>
+    <p class="sub2">Свайпай события. Голос стоит очки действия (⚡ ACT).</p>
+    <div class="hscroll" id="ev-scroll"></div>
+    <div class="h3" id="ev-title">Участники</div>
     <div id="votes-list"></div>
   </section>
 
@@ -302,10 +325,10 @@ nav{display:flex;background:var(--nav);border-top:1px solid #1E1F26;padding:7px 
       <div class="tab" data-cat="sponsor">Спонсоры</div>
     </div>
     <div id="tasks-list"></div>
-    <div class="qr">
+    <div class="card" style="flex-direction:column;text-align:center">
       <div class="tt" style="font-weight:800">Твой уникальный QR-код</div>
-      <div class="box"></div>
-      <div class="ds">Открывается, когда выполнены все задания.<br>Сканируй в клубе — участвуй в розыгрыше призов.</div>
+      <div class="qr-tile" style="width:130px;flex:none"><div class="inner"></div></div>
+      <div class="ds">Откроется, когда выполнены все задания.<br>Сканируй в клубе — участвуй в розыгрыше призов.</div>
     </div>
   </section>
 
@@ -317,42 +340,58 @@ nav{display:flex;background:var(--nav);border-top:1px solid #1E1F26;padding:7px 
       <div class="tab on" data-team="blue">Синие</div>
       <div class="tab" data-team="red">Красные</div>
     </div>
-    <div class="h2" style="font-size:14px;margin-top:4px">Тренеры</div>
+    <div class="h3" style="margin-top:2px">Тренеры</div>
     <div class="people" id="d-coaches"></div>
-    <div class="h2" style="font-size:14px;margin-top:0">Участники команды</div>
+    <div class="h3" style="margin-top:0">Участники команды</div>
     <div class="people" id="d-members"></div>
-    <div class="h2" style="font-size:14px;margin-top:0">Помочь</div>
+    <div class="h3" style="margin-top:0">Помочь</div>
     <div class="input"><span>🏋️</span><input type="number" id="d-sum" value="7000" min="100"><span class="ok">✓</span></div>
     <button class="btn full" id="d-send">Отправить</button>
   </section>
 
-  <!-- ПРОКАЧКА (саб) -->
+  <!-- ПРОКАЧКА -->
   <section class="screen" id="s-pump">
-    <div class="h2">Прокачка</div>
-    <p class="sub2">Покупай карточки видов спорта — они дают пассивный доход GYM coin в час.</p>
-    <div class="energy-line">
-      <span>⚡</span>
-      <div class="bar"><div class="fill" id="en-fill" style="width:100%"></div></div>
-      <span class="num" style="font-size:12px"><b id="en-cur">1000</b>/<span id="en-max">1000</span></span>
+    <div class="h3" style="font-size:16px">QR на внимательность</div>
+    <div class="qr-row">
+      <div class="qr-tile"><div class="inner"></div></div>
+      <div class="qr-tile"><div class="inner"></div></div>
+      <div class="qr-tile"><div class="inner"></div></div>
+      <div class="qr-tile mist">?</div>
     </div>
-    <div class="card">
-      <div class="ic">🔋</div>
-      <div class="b"><div class="tt">Ускорение энергии</div><div class="ds">+500 к максимуму тапов</div></div>
-      <button class="btn" id="en-up">Купить</button>
+    <div class="hscroll cats" id="pump-cats"></div>
+    <div class="grid2" id="pump-grid"></div>
+    <div class="energy-zone">
+      <div class="energy-left">
+        <div class="bolt">⚡</div>
+        <div class="val num"><span id="en-cur">1000</span>/<span id="en-max">10000</span></div>
+        <div class="cap">Энергия для тапов</div>
+      </div>
+      <div>
+        <div class="can-wrap" id="can">
+          <img src="data:image/jpeg;base64,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" alt="LIT ENERGY" draggable="false">
+          <span class="z z1">⚡</span><span class="z z2">⚡</span><span class="z z3">⚡</span><span class="z z4">⚡</span>
+        </div>
+        <div class="can-lb">LIT ENERGY · заряд энергии</div>
+      </div>
     </div>
     <div class="card">
       <div class="ic">👊</div>
       <div class="b"><div class="tt">Сила тапа</div><div class="ds" id="tap-next">1 → 2 за тап</div></div>
       <button class="btn" id="tap-up">Купить</button>
     </div>
-    <div class="grid2" id="pump-grid"></div>
+    <div class="card">
+      <div class="ic">🔋</div>
+      <div class="b"><div class="tt">Ускорение энергии</div><div class="ds">+500 к максимуму тапов</div></div>
+      <button class="btn" id="en-up">Купить</button>
+    </div>
   </section>
 
-  <!-- СПОРЫ (саб) -->
+  <!-- СПОРЫ -->
   <section class="screen" id="s-vs">
     <div class="h2">Споры 1×1</div>
-    <p class="sub2">Ставь GYM coin на исход. Угадал — забираешь банк.</p>
-    <div id="vs-card-holder"></div>
+    <p class="sub2">Свайпай споры влево-вправо. Ставь GYM coin на исход.</p>
+    <div class="hscroll" id="vs-scroll"></div>
+    <div class="vs-dots" id="vs-dots"></div>
     <div class="results">
       <div><div style="font-size:11px;color:var(--muted)">Твои результаты</div>
       <div class="r num"><b id="vs-w">0</b><span> / </span><b id="vs-l" style="color:var(--red)">0</b></div></div>
@@ -360,18 +399,25 @@ nav{display:flex;background:var(--nav);border-top:1px solid #1E1F26;padding:7px 
     </div>
   </section>
 
-  <!-- ОЧКИ ДЕЙСТВИЯ (саб) -->
+  <!-- ОЧКИ ДЕЙСТВИЯ -->
   <section class="screen" id="s-act">
     <div class="h2">Очки действия</div>
     <p class="sub2">Меняй GYM coin на ⚡ ACT — они нужны для голосований и розыгрышей.</p>
     <div class="swap">
       <div class="row"><span class="cur">🏋️ GYM</span><input type="number" id="swap-in" value="7000" min="100"></div>
-      <div class="mid">⇅</div>
-      <div class="row"><span class="cur">⚡ ACT</span><span class="num" id="swap-out" style="font-size:16px">15</span></div>
-      <button class="btn full" id="swap-btn">Обменять</button>
+      <div class="swap-mid"><button class="swap-btn" id="swap-btn">⇅</button></div>
+      <div class="row"><span class="cur">⚡ ACT</span><span class="num" id="swap-out" style="font-size:16px">14</span></div>
     </div>
-    <div class="h2" style="font-size:15px">Задания спонсоров</div>
-    <div id="sponsor-tasks"></div>
+    <div class="h3">Задания спонсоров</div>
+    <div class="hscroll" id="sponsor-scroll"></div>
+    <div class="h3">NFT · коллекция сезона</div>
+    <div class="nft-grid">
+      <div class="nft n1"><span class="em">🏋️</span><span class="tag">Железный жим #001</span></div>
+      <div class="nft n2"><span class="em">💀</span><span class="tag">Terminator gold #007</span></div>
+      <div class="nft n3"><span class="em">🥊</span><span class="tag">Перчатка сезона #013</span></div>
+      <div class="nft n4"><span class="em">⚡</span><span class="tag">Молния LIT #042</span></div>
+    </div>
+    <p class="sub2" style="margin-top:6px">За ⚡ ACT можно купить NFT — билет в тематику спора, редакции и розыгрыши.</p>
     <button class="btn full" id="raffle-btn">🎁 Участие в розыгрыше — 50 ⚡</button>
   </section>
 </main>
@@ -388,8 +434,10 @@ nav{display:flex;background:var(--nav);border-top:1px solid #1E1F26;padding:7px 
 
 <script>
 /* ============================================================
-   БИТВА ТРЕНЕРОВ · GYM — прототип (DEMO). Дизайн по мокапам PDF.
-   Экономика: GYM coin (тапы+пассив) и ACT (задания/обмен).
+   БИТВА ТРЕНЕРОВ · GYM — прототип v3 (DEMO)
+   Правки по утверждению макетов 04.07: зелёное выделение в донатах,
+   карусели событий/споров/категорий/спонсоров, банка LIT ENERGY,
+   вращение свапа, NFT-блок.
 ============================================================ */
 const CONFIG = {
   teams: {
@@ -399,45 +447,55 @@ const CONFIG = {
             members:[{n:'Олег Иванов',e:'🦁'},{n:'Полина Красовская',e:'🌸'},{n:'Тимур Саенко',e:'🔥'}] },
   },
   ranks: [
-    {nm:'Дрищ',      em:'🦴', cap:1e3},
-    {nm:'Салага',    em:'🐣', cap:1e4},
-    {nm:'Новичок',   em:'🧢', cap:5e4},
-    {nm:'Качок',     em:'💪', cap:2e5},
-    {nm:'Атлет',     em:'🏋️', cap:1e6},
-    {nm:'Машина',    em:'🤖', cap:3e6},
-    {nm:'Халк',      em:'🟢', cap:6e6},
-    {nm:'Супермен',  em:'🦸', cap:1e7},
-    {nm:'Terminator',em:'💀', cap:1e7},
+    {nm:'Дрищ',em:'🦴',cap:1e3},{nm:'Салага',em:'🐣',cap:1e4},{nm:'Новичок',em:'🧢',cap:5e4},
+    {nm:'Качок',em:'💪',cap:2e5},{nm:'Атлет',em:'🏋️',cap:1e6},{nm:'Машина',em:'🤖',cap:3e6},
+    {nm:'Халк',em:'🟢',cap:6e6},{nm:'Супермен',em:'🦸',cap:1e7},{nm:'Terminator',em:'💀',cap:1e7},
   ],
-  tapSteps: [1,2,5,10,25,50],
-  tapPrices: [0, 5e3, 5e4, 4e5, 3e6, 2e7],
-  energy: { base:1000, step:500, max:10000, regen:3, upPriceBase:2000, upGrowth:2 },
-  pumps: [
-    {id:'box',  em:'🥊', nm:'Бокс',            inc:120},
-    {id:'swim', em:'🏊', nm:'Плавание',         inc:90},
-    {id:'run',  em:'🏃', nm:'Лёгкая атлетика',  inc:70},
-    {id:'ext',  em:'🪂', nm:'Экстрим',          inc:200},
-    {id:'moto', em:'🏎', nm:'Авто-мото',        inc:260},
-    {id:'cyber',em:'🎮', nm:'Киберспорт',       inc:150},
+  tapSteps:[1,2,5,10,25,50], tapPrices:[0,5e3,5e4,4e5,3e6,2e7],
+  energy:{ base:1000, step:500, max:10000, regen:3, upPriceBase:2000, upGrowth:2, canCooldownH:4 },
+  /* Голосования: широкие карточки-события (свайп). Картинки — от оператора, позже. */
+  events: [
+    { id:'box',  t:'Экстремальный бокс', d:'20.12 · 19:00', em:'🥊', ph:false },
+    { id:'race', t:'Дикие скачки',       d:'27.12 · 18:00', em:'🐎', ph:true  },
+    { id:'wall', t:'Непробиваемые',      d:'03.01 · 19:00', em:'🛡️', ph:true  },
   ],
-  pumpBasePrice: 1500, pumpGrowth: 1.9,
+  /* Споры: карусель. Тексты-заглушки в тоне PDF; реальные — от оператора. */
+  disputes: [
+    { q:'Отожмётся ли Павел Морозов 15 раз, не сбиваясь, на мыльном полу?', a:'Павел М.', b:'Соперник', stake:20 },
+    { q:'Провисит ли Артём Белых на турнике дольше 3 минут?',               a:'Артём Б.', b:'Таймер',   stake:25 },
+    { q:'Пробежит ли Анна Заяц стометровку быстрее судейской собаки?',      a:'Анна З.',  b:'Собака',   stake:15 },
+    { q:'Съест ли тренер Жук лимон целиком без единой гримасы?',            a:'Жук',      b:'Лимон',    stake:10 },
+  ],
+  /* Прокачка: категории (свайп, розовый = выбранная) и карточки-дисциплины. */
+  pumpCats: [
+    { id:'fight', nm:'Единоборства',    items:[['🥊','Бокс',140],['🤼','Борьба',120],['🥋','Дзюдо',110],['🦵','Кикбоксинг',130],['🥷','ММА',180],['🤺','Фехтование',90]] },
+    { id:'athl',  nm:'Лёгкая атлетика', items:[['🏃','Спринт',80],['🏃‍♀️','Марафон',70],['🦘','Прыжки',75],['🥇','Многоборье',95],['🏋️','Толкание ядра',85],['🎽','Эстафета',65]] },
+    { id:'ext',   nm:'Экстремальные',   items:[['🪂','Парашют',220],['🏄','Сёрфинг',180],['🧗','Скалолазание',160],['🛹','Скейт',120],['🚵','Даунхилл',170],['🤿','Фридайвинг',150]] },
+    { id:'moto',  nm:'Авто-мото',       items:[['🏎','Кольцевые',260],['🏍','Мотокросс',230],['🛞','Дрифт',210],['🚙','Ралли',240],['🛺','Багги',150],['🏁','Картинг',120]] },
+    { id:'shoot', nm:'Стрельба',        items:[['🎯','Пулевая',100],['🏹','Лук',95],['🔫','Стендовая',110],['🎪','Биатлон',130],['🗡','Метание',80],['💥','Практическая',120]] },
+    { id:'fit',   nm:'Фитнес',          items:[['💪','Кроссфит',110],['🧘','Йога',60],['🤸','Гимнастика',90],['🏊','Плавание',85],['🚴','Сайкл',75],['⛹️','Функционалка',95]] },
+    { id:'table', nm:'Настольные',      items:[['♟','Шахматы',70],['🎱','Бильярд',80],['🏓','Пинг-понг',75],['🎯','Дартс',60],['🀄','Го',65],['🃏','Покер',120]] },
+    { id:'cyber', nm:'Киберспорт',      items:[['🎮','Шутеры',150],['🕹','Файтинги',130],['⚽','Симы',110],['🏆','MOBA',170],['🚀','Стратегии',120],['👾','Ретро',60]] },
+  ],
+  pumpBasePrice:1500, pumpGrowth:1.9,
   tasks: [
-    {id:'inst', cat:'soc',    ic:'📸', tt:'Битва Тренеров в Instagram', ds:'Подписаться на аккаунт', act:15},
-    {id:'tt',   cat:'soc',    ic:'🎵', tt:'Битва Тренеров в TikTok',    ds:'Подписаться на аккаунт', act:15},
-    {id:'vk',   cat:'soc',    ic:'💙', tt:'Битва Тренеров в VK',        ds:'Подписаться на сообщество', act:15},
-    {id:'rt',   cat:'media',  ic:'📺', tt:'Канал на Rutube',            ds:'Подписаться и посмотреть выпуск', act:25},
-    {id:'yt',   cat:'media',  ic:'▶️', tt:'Шортсы недели',              ds:'Посмотреть 3 нарезки шоу', act:20},
-    {id:'sp1',  cat:'sponsor',ic:'🛒', tt:'Товар спонсора',             ds:'Купить по уникальному QR', act:60},
-    {id:'sp2',  cat:'sponsor',ic:'🎰', tt:'Депозит у букмекера',        ds:'Регистрация по QR + депозит', act:100},
+    {id:'inst',cat:'soc',ic:'📸',tt:'Битва Тренеров в Instagram',ds:'Подписаться на аккаунт',act:15},
+    {id:'tt',cat:'soc',ic:'🎵',tt:'Битва Тренеров в TikTok',ds:'Подписаться на аккаунт',act:15},
+    {id:'vk',cat:'soc',ic:'💙',tt:'Битва Тренеров в VK',ds:'Подписаться на сообщество',act:15},
+    {id:'rt',cat:'media',ic:'📺',tt:'Канал на Rutube',ds:'Подписаться и посмотреть выпуск',act:25},
+    {id:'yt',cat:'media',ic:'▶️',tt:'Шортсы недели',ds:'Посмотреть 3 нарезки шоу',act:20},
+    {id:'sp1',cat:'sponsor',ic:'🛒',tt:'Товар спонсора',ds:'Купить по уникальному QR',act:60},
+    {id:'sp2',cat:'sponsor',ic:'🎰',tt:'Депозит у букмекера',ds:'Регистрация по QR + депозит',act:100},
   ],
+  /* Задания спонсоров (ACT): свайп-карточки. Картинки — от оператора. */
   sponsorActTasks: [
-    {id:'sg1', ic:'🎮', tt:'Мини-игра спонсора', ds:'Сыграть 1 раунд', act:10},
-    {id:'sg2', ic:'📋', tt:'Опрос о шоу',        ds:'2 минуты, 8 вопросов', act:12},
+    {id:'sg1',ic:'🎮',tt:'Мини-игра спонсора',ds:'Сыграть 1 раунд',act:10},
+    {id:'sg2',ic:'📋',tt:'Опрос о шоу',ds:'2 минуты, 8 вопросов',act:12},
+    {id:'sg3',ic:'🥤',tt:'LIT ENERGY квиз',ds:'Угадай вкус по описанию',act:8},
+    {id:'sg4',ic:'🛒',tt:'Витрина спонсора',ds:'Посмотреть 5 товаров',act:6},
   ],
-  swapRate: 500,           // GYM за 1 ACT (по мокапу: минят GYM и тратят на ACT)
-  vs: { q:'Отжимания на Павле Морозове: 15 раз не сбиваясь на мыльном полу?', a:'За', b:'Против', stake:20 },
-  refBonus: 5000,
-  friends: [{n:'Михаил Пепин',v:5180},{n:'Анна Морозова',v:4380},{n:'Павел Жук',v:4122},{n:'Олег Вербицкий',v:3970},{n:'Анастасия Кашина',v:2367},{n:'Екатерина Темникова',v:2098}],
+  swapRate:500, refBonus:5000,
+  friends:[{n:'Михаил Пепин',v:5180},{n:'Анна Морозова',v:4380},{n:'Павел Жук',v:4122},{n:'Олег Вербицкий',v:3970},{n:'Анастасия Кашина',v:2367},{n:'Екатерина Темникова',v:2098}],
 };
 
 const tg = window.Telegram?.WebApp;
@@ -445,272 +503,311 @@ if (tg){ tg.ready(); tg.expand(); tg.setHeaderColor('#000000'); tg.setBackground
 const tgUser = tg?.initDataUnsafe?.user;
 const hap = s=>{ try{ tg?.HapticFeedback?.impactOccurred(s); }catch(e){} };
 
-/* ---------- state ---------- */
-const KEY='bt_gym_v2';
+const KEY='bt_gym_v3';
 const now=()=>Date.now();
 const def=()=>({ gym:0, act:0, tapLvl:0, enLvl:0, energy:1000, last:now(),
-  team:null, pumps:{}, tasks:{}, vs:{w:0,l:0,open:true}, refs:0, raffles:0 });
+  team:null, pumps:{}, tasks:{}, vs:{w:0,l:0}, refs:0, raffles:0, canUsed:0 });
 let S; try{ S=Object.assign(def(), JSON.parse(localStorage.getItem(KEY)||'{}')); }catch(e){ S=def(); }
 
-const enMax = ()=> Math.min(CONFIG.energy.max, CONFIG.energy.base + S.enLvl*CONFIG.energy.step);
-const perTap= ()=> CONFIG.tapSteps[S.tapLvl];
-const hourly= ()=> CONFIG.pumps.reduce((s,p)=> s + (S.pumps[p.id]||0)*p.inc, 0);
-const pumpPrice = p => Math.round(CONFIG.pumpBasePrice * Math.pow(CONFIG.pumpGrowth, (S.pumps[p.id]||0)) * p.inc/100);
-const enUpPrice = ()=> Math.round(CONFIG.energy.upPriceBase * Math.pow(CONFIG.energy.upGrowth, S.enLvl));
+const enMax=()=>Math.min(CONFIG.energy.max, CONFIG.energy.base+S.enLvl*CONFIG.energy.step);
+const perTap=()=>CONFIG.tapSteps[S.tapLvl];
+const allPumpItems=()=>CONFIG.pumpCats.flatMap(c=>c.items.map((it,i)=>({key:c.id+'_'+i, inc:it[2]})));
+const hourly=()=>allPumpItems().reduce((s,p)=>s+(S.pumps[p.key]||0)*p.inc,0);
+const itemPrice=(inc,lvl)=>Math.round(CONFIG.pumpBasePrice*Math.pow(CONFIG.pumpGrowth,lvl)*inc/100);
+const enUpPrice=()=>Math.round(CONFIG.energy.upPriceBase*Math.pow(CONFIG.energy.upGrowth,S.enLvl));
 
-/* оффлайн: энергия + пассивный доход */
-const dt = Math.floor((now()-S.last)/1000);
-S.energy = Math.min(enMax(), S.energy + dt*CONFIG.energy.regen);
-if (hourly()>0 && dt>30) S.gym += Math.floor(hourly()*dt/3600);
+const dt=Math.floor((now()-S.last)/1000);
+S.energy=Math.min(enMax(), S.energy+dt*CONFIG.energy.regen);
+if(hourly()>0 && dt>30) S.gym += Math.floor(hourly()*dt/3600);
 function save(){ S.last=now(); localStorage.setItem(KEY, JSON.stringify(S)); }
-setInterval(save, 3000);
+setInterval(save,3000);
 
-/* ---------- utils ---------- */
 const $=q=>document.querySelector(q);
 const fmt=n=>Math.floor(n).toLocaleString('ru-RU');
-const short=n=> n>=1e6? (n/1e6).toFixed(n%1e6?1:0)+'M' : n>=1e3? Math.round(n/1e3)+'K' : ''+n;
-function toast(m){ const t=$('#toast'); t.textContent=m; t.classList.add('show'); clearTimeout(t._h); t._h=setTimeout(()=>t.classList.remove('show'),1900); }
-function rankIdx(){ let i=0; while(i<CONFIG.ranks.length-1 && S.gym>=CONFIG.ranks[i].cap) i++; return i; }
+const short=n=>n>=1e6?(n/1e6).toFixed(n%1e6?1:0)+'M':n>=1e3?Math.round(n/1e3)+'K':''+n;
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),1900);}
+function rankIdx(){let i=0;while(i<CONFIG.ranks.length-1&&S.gym>=CONFIG.ranks[i].cap)i++;return i;}
 
-/* ---------- render ---------- */
+/* ---------- главная ---------- */
 function rHome(){
-  $('#gym').textContent = fmt(S.gym);
-  $('#act').textContent = fmt(S.act);
-  $('#hourly').textContent = fmt(hourly());
-  $('#tap-badge').textContent = perTap();
-  const i=rankIdx(), r=CONFIG.ranks[i], prev = i? CONFIG.ranks[i-1].cap : 0;
+  $('#gym').textContent=fmt(S.gym); $('#act').textContent=fmt(S.act);
+  $('#hourly').textContent=fmt(hourly()); $('#tap-badge').textContent=perTap();
+  const i=rankIdx(), r=CONFIG.ranks[i], prev=i?CONFIG.ranks[i-1].cap:0;
   $('#rank-em').textContent=r.em; $('#rank-nm').textContent=r.nm;
   $('#rank-cap').textContent=short(r.cap); $('#rank-lvl').textContent=i+1;
-  $('#rank-fill').style.width = Math.min(100,(S.gym-prev)/(r.cap-prev)*100)+'%';
+  $('#rank-fill').style.width=Math.min(100,(S.gym-prev)/(r.cap-prev)*100)+'%';
 }
 function rEnergy(){
   $('#en-cur').textContent=fmt(S.energy); $('#en-max').textContent=fmt(enMax());
-  $('#en-fill').style.width=(S.energy/enMax()*100)+'%';
 }
-function rPump(){
-  rEnergy();
-  $('#en-up').textContent = fmt(enUpPrice())+' 🏋';
-  $('#en-up').disabled = S.gym < enUpPrice() || enMax()>=CONFIG.energy.max;
-  const nxt = CONFIG.tapSteps[S.tapLvl+1];
-  if (nxt){ $('#tap-next').textContent = `${perTap()} → ${nxt} за тап`;
-    $('#tap-up').textContent = fmt(CONFIG.tapPrices[S.tapLvl+1])+' 🏋';
-    $('#tap-up').disabled = S.gym < CONFIG.tapPrices[S.tapLvl+1];
-  } else { $('#tap-next').textContent='Максимум: 50 за тап'; $('#tap-up').disabled=true; $('#tap-up').textContent='MAX'; }
-  const g=$('#pump-grid'); g.innerHTML='';
-  for (const p of CONFIG.pumps){
-    const lvl=S.pumps[p.id]||0, price=pumpPrice(p);
-    const d=document.createElement('div'); d.className='pump'+(S.gym<price?' locked':'');
-    d.innerHTML=`<span class="lvl">ур. ${lvl}</span><div class="em">${p.em}</div><div class="tt">${p.nm}</div>
-      <div class="inc">+<b>${fmt(p.inc)}</b> 🏋/час за уровень</div><div class="pr">${fmt(price)} 🏋</div>`;
-    d.addEventListener('click',()=>{
-      if(S.gym<price) return;
-      S.gym-=price; S.pumps[p.id]=lvl+1; hap('medium');
-      toast(`${p.em} ${p.nm} — ур. ${lvl+1}, доход +${fmt(p.inc)}/час`);
-      rPump(); rHome(); save();
-    });
-    g.appendChild(d);
+const tap=$('#tap');
+function doTap(x,y){
+  if(S.energy<1){toast('⚡ Энергия кончилась — жми банку LIT ENERGY в Прокачке');return;}
+  S.energy--; const g=perTap(); S.gym+=g;
+  const f=document.createElement('div');f.className='float';f.textContent='+'+g;
+  const r=tap.getBoundingClientRect();
+  f.style.left=(x-r.left-10)+'px';f.style.top=(y-r.top-14)+'px';
+  tap.appendChild(f);setTimeout(()=>f.remove(),850);
+  hap('light'); rHome();
+}
+tap.addEventListener('touchstart',e=>{e.preventDefault();for(const t of e.changedTouches)doTap(t.clientX,t.clientY);},{passive:false});
+tap.addEventListener('mousedown',e=>{if(!('ontouchstart' in window))doTap(e.clientX,e.clientY);});
+setInterval(()=>{
+  if(S.energy<enMax()){S.energy=Math.min(enMax(),S.energy+CONFIG.energy.regen/2);if($('#s-pump').classList.contains('active'))rEnergy();}
+  if(hourly()>0){S.gym+=hourly()/7200;if($('#s-home').classList.contains('active'))$('#gym').textContent=fmt(S.gym);}
+},500);
+
+/* ---------- прокачка ---------- */
+let pumpCat = CONFIG.pumpCats[0].id;
+function rPumpCats(){
+  const el=$('#pump-cats'); el.innerHTML='';
+  for(const c of CONFIG.pumpCats){
+    const d=document.createElement('div'); d.className='cat'+(c.id===pumpCat?' on':'');
+    d.textContent=c.nm;
+    d.addEventListener('click',()=>{pumpCat=c.id;hap('light');rPumpCats();rPumpGrid();
+      d.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});});
+    el.appendChild(d);
   }
 }
+function rPumpGrid(){
+  const cat=CONFIG.pumpCats.find(c=>c.id===pumpCat);
+  const g=$('#pump-grid'); g.innerHTML='';
+  cat.items.forEach((it,i)=>{
+    const [em,nm,inc]=it, key=cat.id+'_'+i, lvl=S.pumps[key]||0, price=itemPrice(inc,lvl);
+    const d=document.createElement('div'); d.className='pump'+(S.gym<price?' locked':'');
+    d.innerHTML=`<span class="lvl">ур. ${lvl}</span><div class="em">${em}</div><div class="tt">${nm}</div>
+      <div class="inc">+<b>${fmt(inc)}</b> 🏋/час за уровень</div><div class="pr">${fmt(price)} 🏋</div>`;
+    d.addEventListener('click',()=>{
+      if(S.gym<price)return;
+      S.gym-=price;S.pumps[key]=lvl+1;hap('medium');
+      toast(`${em} ${nm} — ур. ${lvl+1}, доход +${fmt(inc)}/час`);
+      rPumpGrid();rHome();rBoostBtns();save();
+    });
+    g.appendChild(d);
+  });
+}
+function rBoostBtns(){
+  $('#en-up').textContent=fmt(enUpPrice())+' 🏋';
+  $('#en-up').disabled=S.gym<enUpPrice()||enMax()>=CONFIG.energy.max;
+  const nxt=CONFIG.tapSteps[S.tapLvl+1];
+  if(nxt){$('#tap-next').textContent=`${perTap()} → ${nxt} за тап`;
+    $('#tap-up').textContent=fmt(CONFIG.tapPrices[S.tapLvl+1])+' 🏋';
+    $('#tap-up').disabled=S.gym<CONFIG.tapPrices[S.tapLvl+1];
+  } else {$('#tap-next').textContent='Максимум: 50 за тап';$('#tap-up').disabled=true;$('#tap-up').textContent='MAX';}
+}
+$('#en-up').addEventListener('click',()=>{const p=enUpPrice();if(S.gym<p)return;
+  S.gym-=p;S.enLvl++;S.energy=enMax();hap('medium');toast(`🔋 Энергия: ${fmt(enMax())}`);rEnergy();rBoostBtns();rHome();save();});
+$('#tap-up').addEventListener('click',()=>{const p=CONFIG.tapPrices[S.tapLvl+1];if(!p||S.gym<p)return;
+  S.gym-=p;S.tapLvl++;hap('medium');toast(`👊 Сила тапа: ${perTap()}`);rBoostBtns();rHome();save();});
+/* банка спонсора: полный заряд раз в N часов */
+$('#can').addEventListener('click',()=>{
+  const cd=CONFIG.energy.canCooldownH*3600*1000;
+  const left=S.canUsed+cd-now();
+  if(left>0){toast(`🥤 LIT ENERGY перезаряжается: ${Math.ceil(left/36e5*10)/10} ч`);return;}
+  S.canUsed=now();S.energy=enMax();hap('heavy');
+  toast('⚡ LIT ENERGY: энергия полностью заряжена!');rEnergy();save();
+});
+
+/* ---------- голосования ---------- */
+let evSel = CONFIG.events[0].id;
+function rEvents(){
+  const el=$('#ev-scroll'); el.innerHTML='';
+  for(const ev of CONFIG.events){
+    const d=document.createElement('div'); d.className='ev-card'+(ev.id===evSel?' on':'');
+    d.innerHTML=`<div class="img ${ev.ph?'ph':''}">${ev.em}</div>
+      <div class="cap"><div class="tt">${ev.t}</div><div class="ds">${ev.d} · голосование открыто</div></div>`;
+    d.addEventListener('click',()=>{evSel=ev.id;hap('light');rEvents();rVotes();
+      d.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});});
+    el.appendChild(d);
+  }
+}
+function rVotes(){
+  const ev=CONFIG.events.find(e=>e.id===evSel);
+  $('#ev-title').textContent=`Участники · ${ev.t}`;
+  const el=$('#votes-list'); el.innerHTML='';
+  const team=CONFIG.teams[S.team||'blue'];
+  [...team.coaches,...team.members].slice(0,5).forEach(p=>{
+    const vkey='vote_'+ev.id+'_'+p.n, voted=S[vkey];
+    const c=document.createElement('div'); c.className='card';
+    c.innerHTML=`<div class="ava sm">${p.e}</div><div class="b"><div class="tt">${p.n}</div>
+      <div class="ds">Кандидат на выход</div></div>
+      <button class="btn ${voted?'done':''}" ${!voted&&S.act<15?'disabled':''}>${voted?'✓':'−15 ⚡'}</button>`;
+    if(!voted) c.querySelector('.btn').addEventListener('click',()=>{
+      if(S.act<15){toast('Не хватает ⚡ — выполни задания');return;}
+      S.act-=15;S[vkey]=1;hap('medium');toast(`Голос за: ${p.n} (${ev.t})`);rVotes();rHome();save();
+    });
+    el.appendChild(c);
+  });
+}
+
+/* ---------- споры: карусель ---------- */
+function rVs(){
+  const el=$('#vs-scroll'); el.innerHTML='';
+  const dots=$('#vs-dots'); dots.innerHTML='';
+  CONFIG.disputes.forEach((d,i)=>{
+    const c=document.createElement('div'); c.className='vs-card';
+    c.innerHTML=`<div class="q">${d.q}</div>
+      <div class="vs-row">
+        <div class="fighter"><div class="ava">🙂</div><div class="nm">${d.a}</div></div>
+        <div class="stake num">− ${d.stake} 🏋</div>
+        <div class="fighter"><div class="ava">🙃</div><div class="nm">${d.b}</div></div>
+      </div>
+      <div class="vote2"><button class="btn">За</button><button class="btn against">Против</button></div>`;
+    const bet=()=>{
+      if(S.gym<d.stake){toast('Не хватает GYM coin');return;}
+      S.gym-=d.stake;
+      const win=Math.random()<0.5;
+      if(win){S.gym+=d.stake*2;S.vs.w++;toast(`🎉 Спор выигран: +${d.stake*2} 🏋`);hap('heavy');}
+      else{S.vs.l++;toast('Спор проигран — реванш ждёт');hap('medium');}
+      $('#vs-w').textContent=S.vs.w;$('#vs-l').textContent=S.vs.l;rHome();save();
+    };
+    c.querySelectorAll('.btn').forEach(b=>b.addEventListener('click',bet));
+    el.appendChild(c);
+    const dot=document.createElement('i'); if(i===0)dot.className='on'; dots.appendChild(dot);
+  });
+  $('#vs-w').textContent=S.vs.w;$('#vs-l').textContent=S.vs.l;
+  el.addEventListener('scroll',()=>{
+    const i=Math.round(el.scrollLeft/(el.scrollWidth/CONFIG.disputes.length));
+    dots.querySelectorAll('i').forEach((d,j)=>d.className=j===Math.min(i,CONFIG.disputes.length-1)?'on':'');
+  },{passive:true});
+}
+
+/* ---------- задания ---------- */
 function rTasks(cat){
   const el=$('#tasks-list'); el.innerHTML='';
-  for (const t of CONFIG.tasks.filter(t=>t.cat===cat)){
+  for(const t of CONFIG.tasks.filter(t=>t.cat===cat)){
     const done=!!S.tasks[t.id];
     const c=document.createElement('div'); c.className='card';
     c.innerHTML=`<div class="ic">${t.ic}</div><div class="b"><div class="tt">${t.tt}</div><div class="ds">${t.ds}</div></div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
       <span class="amount">+${t.act} ⚡</span><button class="btn ${done?'done':''}">${done?'✓':'Выполнить'}</button></div>`;
-    if(!done) c.querySelector('.btn').addEventListener('click',()=>{
-      S.tasks[t.id]=1; S.act+=t.act; hap('heavy'); toast(`+${t.act} ⚡ — ${t.tt}`); rTasks(cat); rHome(); save();
+    if(!done)c.querySelector('.btn').addEventListener('click',()=>{
+      S.tasks[t.id]=1;S.act+=t.act;hap('heavy');toast(`+${t.act} ⚡ — ${t.tt}`);rTasks(cat);rHome();save();
     });
     el.appendChild(c);
   }
 }
-function rVotes(){
-  const el=$('#votes-list'); el.innerHTML='';
-  const team = CONFIG.teams[S.team||'blue'];
-  [...team.coaches, ...team.members].slice(0,5).forEach(p=>{
-    const c=document.createElement('div'); c.className='card';
-    const voted = S['vote_'+p.n];
-    c.innerHTML=`<div class="ava sm">${p.e}</div><div class="b"><div class="tt">${p.n}</div><div class="ds">Кандидат на выход в ринг</div></div>
-      <button class="btn ${voted?'done':''}" ${!voted && S.act<15?'disabled':''}>${voted?'✓':'−15 ⚡'}</button>`;
-    if(!voted) c.querySelector('.btn').addEventListener('click',()=>{
-      if(S.act<15){ toast('Не хватает ⚡ — выполни задания'); return; }
-      S.act-=15; S['vote_'+p.n]=1; hap('medium'); toast(`Голос за: ${p.n}`); rVotes(); rHome(); save();
-    });
-    el.appendChild(c);
-  });
+$('#task-tabs').addEventListener('click',e=>{
+  const t=e.target.closest('.tab');if(!t)return;
+  document.querySelectorAll('#task-tabs .tab').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on');rTasks(t.dataset.cat);hap('light');
+});
+
+/* ---------- донаты ---------- */
+let dTeam='blue', dSel=null;
+function rDonate(){
+  const t=CONFIG.teams[dTeam];
+  const mk=(list,root)=>{root.innerHTML='';
+    list.forEach(p=>{
+      const d=document.createElement('div');d.className='person'+(dSel===p.n?' sel':'');
+      d.innerHTML=`<div class="ava">${p.e}</div><div class="nm">${p.n}</div>`;
+      d.addEventListener('click',()=>{dSel=p.n;hap('light');rDonate();});
+      root.appendChild(d);
+    });};
+  mk(t.coaches,$('#d-coaches'));mk(t.members,$('#d-members'));
 }
+$('#team-tabs').addEventListener('click',e=>{
+  const t=e.target.closest('.tab');if(!t)return;
+  document.querySelectorAll('#team-tabs .tab').forEach(x=>x.classList.remove('on'));
+  t.classList.add('on');dTeam=t.dataset.team;dSel=null;rDonate();hap('light');
+});
+$('#d-send').addEventListener('click',()=>{
+  const v=+$('#d-sum').value||0;
+  if(!dSel){toast('Выбери, кому помочь');return;}
+  if(v<100){toast('Минимум 100 🏋');return;}
+  if(S.gym<v){toast('Не хватает GYM coin');return;}
+  S.gym-=v;hap('heavy');toast(`💜 ${fmt(v)} 🏋 → ${dSel}`);rHome();save();
+});
+
+/* ---------- друзья ---------- */
 function rFriends(){
   const el=$('#friends-list'); el.innerHTML='';
-  $('#fr-count').textContent = CONFIG.friends.length + S.refs;
+  $('#fr-count').textContent=CONFIG.friends.length+S.refs;
   CONFIG.friends.forEach(f=>{
-    const c=document.createElement('div'); c.className='card';
+    const c=document.createElement('div');c.className='card';
     c.innerHTML=`<div class="ava sm">${f.n[0]}</div><div class="b"><div class="tt">${f.n}</div></div>
       <span class="amount">⚡ ${fmt(f.v)}</span>`;
     el.appendChild(c);
   });
 }
-let dTeam='blue', dSel=null;
-function rDonate(){
-  const t=CONFIG.teams[dTeam];
-  const mk=(list,root)=>{ root.innerHTML='';
-    list.forEach(p=>{
-      const d=document.createElement('div'); d.className='person'+(dSel===p.n?' sel':'');
-      d.innerHTML=`<div class="ava">${p.e}</div><div class="nm">${p.n}</div>`;
-      d.addEventListener('click',()=>{ dSel=p.n; hap('light'); rDonate(); });
-      root.appendChild(d);
-    });
-  };
-  mk(t.coaches, $('#d-coaches')); mk(t.members, $('#d-members'));
-}
-function rVs(){
-  const h=$('#vs-card-holder');
-  const st=CONFIG.vs.stake;
-  h.innerHTML=`<div class="vs-card">
-    <div class="q">${CONFIG.vs.q}</div>
-    <div class="vs-row">
-      <div class="fighter"><div class="ava">🙂</div><div class="nm" style="font-size:11px;color:var(--muted)">Павел М.</div></div>
-      <div class="stake num">− ${st} 🏋</div>
-      <div class="fighter"><div class="ava">🙃</div><div class="nm" style="font-size:11px;color:var(--muted)">Соперник</div></div>
-    </div>
-    <div class="vote2">
-      <button class="btn" id="vs-for">За</button>
-      <button class="btn against" id="vs-against">Против</button>
-    </div></div>`;
-  $('#vs-w').textContent=S.vs.w; $('#vs-l').textContent=S.vs.l;
-  const bet=side=>{
-    if(S.gym<st){ toast('Не хватает GYM coin'); return; }
-    S.gym-=st;
-    const win = Math.random()<0.5;
-    if(win){ S.gym+=st*2; S.vs.w++; toast(`🎉 Спор выигран: +${st*2} 🏋`); hap('heavy'); }
-    else   { S.vs.l++; toast('Спор проигран — реванш ждёт'); hap('medium'); }
-    rVs(); rHome(); save();
-  };
-  $('#vs-for').addEventListener('click',()=>bet('a'));
-  $('#vs-against').addEventListener('click',()=>bet('b'));
-}
-function rAct(){
-  const inp=$('#swap-in');
-  const upd=()=>{ $('#swap-out').textContent = Math.floor((+inp.value||0)/CONFIG.swapRate); };
-  inp.oninput=upd; upd();
-  const el=$('#sponsor-tasks'); el.innerHTML='';
-  CONFIG.sponsorActTasks.forEach(t=>{
-    const done=!!S.tasks[t.id];
-    const c=document.createElement('div'); c.className='card';
-    c.innerHTML=`<div class="ic">${t.ic}</div><div class="b"><div class="tt">${t.tt}</div><div class="ds">${t.ds}</div></div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
-      <span class="amount">+${t.act} ⚡</span><button class="btn ${done?'done':''}">${done?'✓':'Выполнить'}</button></div>`;
-    if(!done) c.querySelector('.btn').addEventListener('click',()=>{
-      S.tasks[t.id]=1; S.act+=t.act; hap('heavy'); toast(`+${t.act} ⚡`); rAct(); rHome(); save();
-    });
-    el.appendChild(c);
-  });
-}
-
-/* ---------- tap ---------- */
-const tap=$('#tap');
-function doTap(x,y){
-  if(S.energy<1){ toast('⚡ Энергия кончилась — восстановится сама'); return; }
-  S.energy--; const g=perTap(); S.gym+=g;
-  const f=document.createElement('div'); f.className='float'; f.textContent='+'+g;
-  const r=tap.getBoundingClientRect();
-  f.style.left=(x-r.left-10)+'px'; f.style.top=(y-r.top-14)+'px';
-  tap.appendChild(f); setTimeout(()=>f.remove(),850);
-  hap('light'); rHome();
-}
-tap.addEventListener('touchstart',e=>{ e.preventDefault(); for(const t of e.changedTouches) doTap(t.clientX,t.clientY); },{passive:false});
-tap.addEventListener('mousedown',e=>{ if(!('ontouchstart' in window)) doTap(e.clientX,e.clientY); });
-
-/* реген + пассивный доход онлайн */
-setInterval(()=>{ 
-  if(S.energy<enMax()){ S.energy=Math.min(enMax(),S.energy+CONFIG.energy.regen/2); if($('#s-pump').classList.contains('active')) rEnergy(); }
-  if(hourly()>0){ S.gym += hourly()/7200; if($('#s-home').classList.contains('active')) $('#gym').textContent=fmt(S.gym); }
-},500);
-
-/* ---------- upgrades ---------- */
-$('#en-up').addEventListener('click',()=>{ const p=enUpPrice(); if(S.gym<p)return;
-  S.gym-=p; S.enLvl++; S.energy=enMax(); hap('medium'); toast(`🔋 Энергия: ${fmt(enMax())}`); rPump(); rHome(); save(); });
-$('#tap-up').addEventListener('click',()=>{ const p=CONFIG.tapPrices[S.tapLvl+1]; if(!p||S.gym<p)return;
-  S.gym-=p; S.tapLvl++; hap('medium'); toast(`👊 Сила тапа: ${perTap()}`); rPump(); rHome(); save(); });
-
-/* ---------- donate / swap / raffle / invite ---------- */
-$('#d-send').addEventListener('click',()=>{
-  const v=+$('#d-sum').value||0;
-  if(!dSel){ toast('Выбери, кому помочь'); return; }
-  if(v<100){ toast('Минимум 100 🏋'); return; }
-  if(S.gym<v){ toast('Не хватает GYM coin'); return; }
-  S.gym-=v; hap('heavy'); toast(`💜 ${fmt(v)} 🏋 → ${dSel}`); rHome(); save();
-});
-$('#swap-btn').addEventListener('click',()=>{
-  const v=+$('#swap-in').value||0, out=Math.floor(v/CONFIG.swapRate);
-  if(out<1){ toast(`Минимум ${fmt(CONFIG.swapRate)} 🏋`); return; }
-  if(S.gym<v){ toast('Не хватает GYM coin'); return; }
-  S.gym-=v; S.act+=out; hap('medium'); toast(`⚡ +${out} ACT`); rAct(); rHome(); save();
-});
-$('#raffle-btn').addEventListener('click',()=>{
-  if(S.act<50){ toast('Нужно 50 ⚡ — выполни задания'); return; }
-  S.act-=50; S.raffles++; hap('heavy'); toast(`🎁 Заявка №${S.raffles} на еженедельный розыгрыш принята`); rHome(); save();
-});
 $('#help-friend').addEventListener('click',()=>{
-  if(S.energy<200){ toast('Нужно 200 ⚡ энергии'); return; }
-  S.energy-=200; hap('medium'); toast('🤝 Подарил другу 200 энергии'); save();
+  if(S.energy<200){toast('Нужно 200 ⚡ энергии');return;}
+  S.energy-=200;hap('medium');toast('🤝 Подарил другу 200 энергии');save();
 });
 $('#invite-btn').addEventListener('click',()=>{
   const bot='gym_battlebot';
   const link=`https://t.me/${bot}?start=ref_${tgUser?.id||'demo'}`;
   const text='🏋️ Залетай в Битву Тренеров — тапай, качай команду, забирай призы!';
-  if(tg) tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
-  else { navigator.clipboard?.writeText(link); toast('Ссылка скопирована'); }
-  S.refs++; S.gym+=CONFIG.refBonus; /* demo: начисление сразу для наглядности */
-  rFriends(); rHome(); save();
+  if(tg)tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`);
+  else{navigator.clipboard?.writeText(link);toast('Ссылка скопирована');}
+  S.refs++;S.gym+=CONFIG.refBonus; /* demo: сразу, для наглядности */
+  rFriends();rHome();save();
 });
 
-/* ---------- tabs ---------- */
-$('#task-tabs').addEventListener('click',e=>{
-  const t=e.target.closest('.tab'); if(!t)return;
-  document.querySelectorAll('#task-tabs .tab').forEach(x=>x.classList.remove('on'));
-  t.classList.add('on'); rTasks(t.dataset.cat); hap('light');
+/* ---------- ACT ---------- */
+function rAct(){
+  const inp=$('#swap-in');
+  const upd=()=>{$('#swap-out').textContent=Math.floor((+inp.value||0)/CONFIG.swapRate);};
+  inp.oninput=upd;upd();
+  const el=$('#sponsor-scroll'); el.innerHTML='';
+  CONFIG.sponsorActTasks.forEach(t=>{
+    const done=!!S.tasks[t.id];
+    const c=document.createElement('div');c.className='sp-card';
+    c.innerHTML=`<div class="ic">${t.ic}</div><div class="tt">${t.tt}</div><div class="ds">${t.ds}</div>
+      <button class="btn ${done?'done':''}">${done?'✓ Готово':'+'+t.act+' ⚡'}</button>`;
+    if(!done)c.querySelector('.btn').addEventListener('click',()=>{
+      S.tasks[t.id]=1;S.act+=t.act;hap('heavy');toast(`+${t.act} ⚡`);rAct();rHome();save();
+    });
+    el.appendChild(c);
+  });
+}
+$('#swap-btn').addEventListener('click',function(){
+  this.classList.add('spin');
+  setTimeout(()=>this.classList.remove('spin'),480);
+  const v=+$('#swap-in').value||0, out=Math.floor(v/CONFIG.swapRate);
+  if(out<1){toast(`Минимум ${fmt(CONFIG.swapRate)} 🏋`);return;}
+  if(S.gym<v){toast('Не хватает GYM coin');return;}
+  S.gym-=v;S.act+=out;hap('medium');toast(`⚡ +${out} ACT`);rAct();rHome();save();
 });
-$('#team-tabs').addEventListener('click',e=>{
-  const t=e.target.closest('.tab'); if(!t)return;
-  document.querySelectorAll('#team-tabs .tab').forEach(x=>x.classList.remove('on'));
-  t.classList.add('on'); dTeam=t.dataset.team; dSel=null; rDonate(); hap('light');
+$('#raffle-btn').addEventListener('click',()=>{
+  if(S.act<50){toast('Нужно 50 ⚡ — выполни задания');return;}
+  S.act-=50;S.raffles++;hap('heavy');toast(`🎁 Заявка №${S.raffles} на розыгрыш принята`);rHome();save();
 });
 
-/* ---------- navigation ---------- */
-const SUB = { pump:'Прокачка', vs:'Споры 1×1', act:'Очки действия' };
-function go(name, sub=false){
+/* ---------- навигация ---------- */
+const SUB={pump:'Прокачка',vs:'Споры 1×1',act:'Очки действия'};
+function go(name,sub=false){
   document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
   $('#s-'+name).classList.add('active');
-  $('#hdr').classList.toggle('subpage', sub);
-  $('#hdr-t1').textContent = sub ? SUB[name] : 'GYM';
-  $('#hdr-t2').textContent = sub ? 'GYM' : 'Битва Тренеров 2025';
-  if (tg){ sub ? tg.BackButton?.show() : tg.BackButton?.hide(); }
+  $('#hdr').classList.toggle('subpage',sub);
+  $('#hdr-t1').textContent=sub?SUB[name]:'GYM';
+  $('#hdr-t2').textContent=sub?'GYM':'Битва Тренеров 2025';
+  if(tg){sub?tg.BackButton?.show():tg.BackButton?.hide();}
   hap('light');
 }
 document.querySelectorAll('.ni').forEach(n=>n.addEventListener('click',()=>{
   document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));
-  n.classList.add('on'); go(n.dataset.s);
-  if(n.dataset.s==='votes') rVotes();
+  n.classList.add('on');go(n.dataset.s);
+  if(n.dataset.s==='votes'){rEvents();rVotes();}
 }));
 $('#back-btn').addEventListener('click',()=>go('home'));
 tg?.BackButton?.onClick(()=>go('home'));
-$('#chip-pump').addEventListener('click',()=>{ rPump(); go('pump',true); });
-$('#chip-vs').addEventListener('click',()=>{ rVs(); go('vs',true); });
-$('#chip-act').addEventListener('click',()=>{ rAct(); go('act',true); });
-$('#event-card').addEventListener('click',()=>{ rVs(); go('vs',true); });
+$('#chip-pump').addEventListener('click',()=>{rPumpCats();rPumpGrid();rBoostBtns();rEnergy();go('pump',true);});
+$('#chip-vs').addEventListener('click',()=>{rVs();go('vs',true);});
+$('#chip-act').addEventListener('click',()=>{rAct();go('act',true);});
+$('#event-card').addEventListener('click',()=>{rVs();go('vs',true);});
 
-/* ---------- onboarding ---------- */
+/* ---------- онбординг ---------- */
 function onboard(){
-  const wrap=$('#onboard'), list=$('#onboard-list'); list.innerHTML='';
+  const wrap=$('#onboard'),list=$('#onboard-list');list.innerHTML='';
   [['blue','Синие','🔵'],['red','Красные','🔴']].forEach(([id,nm,em])=>{
     const t=CONFIG.teams[id];
-    const c=document.createElement('div'); c.className='card';
+    const c=document.createElement('div');c.className='card';
     c.innerHTML=`<div class="ic">${em}</div><div class="b"><div class="tt">Команда «${nm}»</div>
       <div class="ds">${t.coaches.map(x=>x.n.split(' ')[0]).join(', ')}</div></div><button class="btn">Выбрать</button>`;
     c.querySelector('.btn').addEventListener('click',()=>{
-      S.team=id; dTeam=id; save(); hap('heavy'); wrap.style.display='none';
-      toast(`${em} Ты в команде «${nm}» — тапай гирю!`); rDonate();
+      S.team=id;dTeam=id;save();hap('heavy');wrap.style.display='none';
+      toast(`${em} Ты в команде «${nm}» — тапай гирю!`);rDonate();
     });
     list.appendChild(c);
   });
@@ -718,8 +815,8 @@ function onboard(){
 }
 
 /* ---------- init ---------- */
-rHome(); rTasks('soc'); rFriends(); rDonate(); rVotes();
-if(!S.team) onboard();
+rHome();rTasks('soc');rFriends();rDonate();rEvents();rVotes();rVs();rEnergy();
+if(!S.team)onboard();
 </script>
 </body>
 </html>
