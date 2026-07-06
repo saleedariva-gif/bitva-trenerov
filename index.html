@@ -269,6 +269,16 @@ nav{display:flex;background:var(--nav);border-top:1px solid #1E1F26;padding:7px 
 .ni .lb{font-size:9.5px;font-weight:700}
 .ni.on{color:var(--violet)}
 .ni.on .lb{color:var(--violet)}
+/* ---- мини-игры ---- */
+.game-hud{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:15px;margin:6px 2px 8px}
+.game-wrap{position:relative;margin:0 0 12px}
+canvas.game{width:100%;height:56vh;max-height:520px;border-radius:18px;background:linear-gradient(180deg,#141420,#0C0C12);display:block;touch-action:none;border:1px solid var(--line)}
+.game-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(5,5,10,.78);border-radius:18px;text-align:center;padding:20px;backdrop-filter:blur(3px)}
+.game-overlay.hidden{display:none}
+.game-overlay .gt{font-size:24px;font-weight:900}
+.game-overlay .gd{font-size:13px;color:var(--muted);line-height:1.5}
+.game-overlay .gr{font-size:34px;font-weight:900;color:var(--gold)}
+.ev-play{margin-top:8px;width:100%;padding:10px}
 #toast{position:fixed;left:50%;bottom:96px;transform:translateX(-50%) translateY(16px);background:var(--card2);
   border:1px solid var(--line);border-radius:13px;padding:10px 16px;font-size:13px;font-weight:600;opacity:0;
   transition:all .25s;z-index:60;white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
@@ -471,6 +481,38 @@ nav{display:flex;background:var(--nav);border-top:1px solid #1E1F26;padding:7px 
     <p class="sub2" style="margin-top:6px">За ⚡ ACT можно купить NFT — билет в тематику спора, редакции и розыгрыши.</p>
     <button class="btn full" id="raffle-btn">🎁 Участие в розыгрыше — 50 ⚡</button>
   </section>
+
+  <!-- ИГРА: НЕПРОБИВАЕМЫЕ -->
+  <section class="screen" id="s-game-wall">
+    <div class="game-hud"><span>Счёт: <b id="gw-score">0</b></span><span id="gw-lives">❤️❤️❤️</span></div>
+    <div class="game-wrap">
+      <canvas class="game" id="gw-canvas"></canvas>
+      <div class="game-overlay" id="gw-overlay">
+        <div class="gt">Непробиваемые</div>
+        <div class="gd">В бойца летят мячи со всех сторон.<br>Тапай по мячам, чтобы отбить.<br>Три пропущенных — конец.</div>
+        <div class="gr hidden" id="gw-result"></div>
+        <button class="btn full" id="gw-start">Играть</button>
+        <button class="btn full dark hidden" id="gw-claim">Забрать награду</button>
+      </div>
+    </div>
+    <p class="sub2">Награда: 5 🏋 за каждый отбитый мяч. Скорость растёт.</p>
+  </section>
+
+  <!-- ИГРА: ДИКИЕ СКАЧКИ -->
+  <section class="screen" id="s-game-race">
+    <div class="game-hud"><span>Дистанция: <b id="gr-score">0</b> м</span><span id="gr-best"></span></div>
+    <div class="game-wrap">
+      <canvas class="game" id="gr-canvas"></canvas>
+      <div class="game-overlay" id="gr-overlay">
+        <div class="gt">Дикие скачки</div>
+        <div class="gd">Скачи на хряке по грязевой трассе.<br>Тап — прыжок через препятствие.<br>Врезался — заезд окончен.</div>
+        <div class="gr hidden" id="gr-result"></div>
+        <button class="btn full" id="gr-start">Поехали</button>
+        <button class="btn full dark hidden" id="gr-claim">Забрать награду</button>
+      </div>
+    </div>
+    <p class="sub2">Награда: 2 🏋 за каждый метр. Хряк разгоняется.</p>
+  </section>
 </main>
 
 <nav id="nav">
@@ -507,8 +549,8 @@ const CONFIG = {
   energy:{ base:1000, step:500, max:10000, regen:3, upPriceBase:2000, upGrowth:2, canCooldownH:4 },
   /* Голосования: широкие карточки-события (свайп). Картинки — от оператора, позже. */
   events: [
-    { id:'race', t:'Дикие скачки',       d:'20.12 · 19:00', em:'🐷', img:'ev_race' },
-    { id:'wall', t:'Непробиваемые',      d:'27.12 · 18:00', em:'🛡️', img:'ev_wall' },
+    { id:'race', t:'Дикие скачки',       d:'20.12 · 19:00', em:'🐷', img:'ev_race', game:'race' },
+    { id:'wall', t:'Непробиваемые',      d:'27.12 · 18:00', em:'🛡️', img:'ev_wall', game:'wall' },
     { id:'box',  t:'Экстремальный бокс', d:'03.01 · 19:00', em:'🥊', img:'ev_box'  },
     { id:'ice',  t:'Ледяная купель',     d:'скоро',         em:'🧊', soon:true },
     { id:'tug',  t:'Перетяни тренера',   d:'скоро',         em:'🪢', soon:true },
@@ -682,7 +724,9 @@ function rEvents(){
     const imgHTML = ev.img&&PHOTOS[ev.img] ? `<img src="${PHOTOS[ev.img]}" alt="">`
       : `${ev.em}${ev.soon?'<span class="soon">анонс скоро</span>':''}`;
     d.innerHTML=`<div class="img">${imgHTML}</div>
-      <div class="cap"><div class="tt">${ev.t}</div><div class="ds">${ev.d}${ev.soon?'':' · голосование открыто'}</div></div>`;
+      <div class="cap"><div class="tt">${ev.t}</div><div class="ds">${ev.d}${ev.soon?'':' · голосование открыто'}</div>
+      ${ev.game?`<button class="btn ev-play">🎮 Играть — заработай GYM</button>`:''}</div>`;
+    if(ev.game){ d.querySelector('.ev-play').addEventListener('click',e=>{e.stopPropagation();openGame(ev.game);}); }
     d.addEventListener('click',()=>{evSel=ev.id;hap('light');rEvents();rVotes();
       d.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});});
     el.appendChild(d);
@@ -850,8 +894,9 @@ $('#raffle-btn').addEventListener('click',()=>{
 });
 
 /* ---------- навигация ---------- */
-const SUB={pump:'Прокачка',vs:'Споры 1×1',act:'Очки действия'};
+const SUB={pump:'Прокачка',vs:'Споры 1×1',act:'Очки действия','game-wall':'Непробиваемые','game-race':'Дикие скачки'};
 function go(name,sub=false){
+  try{gwStop();grStop();}catch(e){}
   document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));
   $('#s-'+name).classList.add('active');
   $('#hdr').classList.toggle('subpage',sub);
@@ -895,6 +940,206 @@ function onboard(){
   });
   wrap.style.display='flex';
 }
+
+
+/* ================== МИНИ-ИГРЫ (demo: счёт на клиенте) ================== */
+function setupCanvas(cv){
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  const r=cv.getBoundingClientRect();
+  cv.width=r.width*dpr; cv.height=r.height*dpr;
+  const ctx=cv.getContext('2d'); ctx.scale(dpr,dpr);
+  return {ctx,W:r.width,H:r.height};
+}
+function openGame(g){
+  if(g==='wall'){ go('game-wall',true); gwIntro(); }
+  else if(g==='race'){ go('game-race',true); grIntro(); }
+}
+
+/* ---------- НЕПРОБИВАЕМЫЕ ---------- */
+const GW={run:false,raf:0,score:0,lives:3,balls:[],speed:1,t:0,last:0,W:0,H:0,ctx:null};
+window.GW=GW;
+const GW_BALLS=['⚽','🏀','🏐','🥎'];
+function gwIntro(){
+  GW.run=false;
+  $('#gw-overlay').classList.remove('hidden');
+  $('#gw-result').classList.add('hidden');
+  $('#gw-claim').classList.add('hidden');
+  $('#gw-start').classList.remove('hidden');
+  $('#gw-start').textContent='Играть';
+}
+function gwStart(){
+  const cv=$('#gw-canvas'); const c=setupCanvas(cv);
+  GW.ctx=c.ctx; GW.W=c.W; GW.H=c.H;
+  GW.run=true; GW.score=0; GW.lives=3; GW.balls=[]; GW.speed=1; GW.t=0; GW.last=performance.now();
+  $('#gw-overlay').classList.add('hidden');
+  gwHud(); cancelAnimationFrame(GW.raf); gwLoop(GW.last);
+}
+function gwStop(){ GW.run=false; cancelAnimationFrame(GW.raf); }
+function gwHud(){
+  $('#gw-score').textContent=GW.score;
+  $('#gw-lives').textContent='❤️'.repeat(GW.lives)+'🖤'.repeat(3-GW.lives);
+}
+function gwSpawn(){
+  const side=Math.floor(Math.random()*4);
+  let x,y;
+  if(side===0){x=Math.random()*GW.W;y=-30;}
+  else if(side===1){x=GW.W+30;y=Math.random()*GW.H;}
+  else if(side===2){x=Math.random()*GW.W;y=GW.H+30;}
+  else{x=-30;y=Math.random()*GW.H;}
+  const cx=GW.W/2, cy=GW.H*0.55;
+  const dx=cx-x, dy=cy-y, d=Math.hypot(dx,dy);
+  const v=(70+Math.random()*40)*GW.speed;
+  GW.balls.push({x,y,vx:dx/d*v,vy:dy/d*v,r:24,emo:GW_BALLS[Math.floor(Math.random()*GW_BALLS.length)]});
+}
+function gwLoop(now){
+  if(!GW.run)return;
+  const dt=Math.min((now-GW.last)/1000,0.05); GW.last=now; GW.t+=dt;
+  GW.speed=1+GW.t/25;
+  if(Math.random()<dt*(1.1+GW.t/30)) gwSpawn();
+  const ctx=GW.ctx, W=GW.W, H=GW.H, cx=W/2, cy=H*0.55;
+  ctx.clearRect(0,0,W,H);
+  // ринг-подсветка
+  ctx.save(); ctx.globalAlpha=.14;
+  const grd=ctx.createRadialGradient(cx,cy,10,cx,cy,H*0.45);
+  grd.addColorStop(0,'#AB55F6'); grd.addColorStop(1,'transparent');
+  ctx.fillStyle=grd; ctx.fillRect(0,0,W,H); ctx.restore();
+  // боец
+  ctx.font='64px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText('🥊',cx,cy-8);
+  ctx.font='13px -apple-system,sans-serif'; ctx.fillStyle='#8E8E96';
+  ctx.fillText('защити бойца',cx,cy+42);
+  // мячи
+  ctx.font='40px serif';
+  for(let i=GW.balls.length-1;i>=0;i--){
+    const b=GW.balls[i];
+    b.x+=b.vx*dt; b.y+=b.vy*dt;
+    ctx.fillText(b.emo,b.x,b.y);
+    if(Math.hypot(b.x-cx,b.y-cy)<42){
+      GW.balls.splice(i,1); GW.lives--; hap('heavy'); gwHud();
+      if(GW.lives<=0){ gwEnd(); return; }
+    }
+  }
+  GW.raf=requestAnimationFrame(gwLoop);
+}
+function gwEnd(){
+  GW.run=false;
+  const reward=GW.score*5;
+  $('#gw-overlay').classList.remove('hidden');
+  $('#gw-result').classList.remove('hidden');
+  $('#gw-result').textContent=`Отбито: ${GW.score} · +${fmt(reward)} 🏋`;
+  $('#gw-start').textContent='Ещё раз';
+  const claim=$('#gw-claim');
+  claim.classList.remove('hidden');
+  claim.textContent=`Забрать ${fmt(reward)} 🏋`;
+  claim.onclick=()=>{ S.gym+=reward; save(); rHome(); toast(`+${fmt(reward)} 🏋 — Непробиваемые`); hap('heavy'); gwIntro(); };
+}
+$('#gw-start').addEventListener('click',gwStart);
+$('#gw-canvas').addEventListener('pointerdown',e=>{
+  if(!GW.run)return;
+  const r=e.target.getBoundingClientRect();
+  const x=e.clientX-r.left, y=e.clientY-r.top;
+  for(let i=GW.balls.length-1;i>=0;i--){
+    const b=GW.balls[i];
+    if(Math.hypot(b.x-x,b.y-y)<b.r+20){
+      GW.balls.splice(i,1); GW.score++; hap('light'); gwHud(); break;
+    }
+  }
+});
+
+/* ---------- ДИКИЕ СКАЧКИ ---------- */
+const GR={run:false,raf:0,dist:0,speed:180,pig:{y:0,vy:0},obs:[],clouds:[],t:0,last:0,W:0,H:0,ctx:null,ground:0,nextObs:0};
+window.GR=GR;
+const GR_OBS=['🪵','🚧','🛢️','🪨'];
+function grIntro(){
+  GR.run=false;
+  $('#gr-overlay').classList.remove('hidden');
+  $('#gr-result').classList.add('hidden');
+  $('#gr-claim').classList.add('hidden');
+  $('#gr-start').classList.remove('hidden');
+  $('#gr-start').textContent='Поехали';
+  const best=+localStorage.getItem('gr_best')||0;
+  $('#gr-best').textContent=best?`Рекорд: ${best} м`:'';
+}
+function grStart(){
+  const cv=$('#gr-canvas'); const c=setupCanvas(cv);
+  GR.ctx=c.ctx; GR.W=c.W; GR.H=c.H; GR.ground=c.H*0.78;
+  GR.run=true; GR.dist=0; GR.speed=180; GR.t=0; GR.obs=[]; GR.nextObs=1.2;
+  GR.pig={y:GR.ground,vy:0};
+  GR.clouds=[...Array(4)].map(()=>({x:Math.random()*c.W,y:30+Math.random()*c.H*0.3,s:0.5+Math.random()*0.5}));
+  GR.last=performance.now();
+  $('#gr-overlay').classList.add('hidden');
+  cancelAnimationFrame(GR.raf); grLoop(GR.last);
+}
+function grStop(){ GR.run=false; cancelAnimationFrame(GR.raf); }
+function grJump(){
+  if(!GR.run)return;
+  if(GR.pig.y>=GR.ground-1){ GR.pig.vy=-620; hap('light'); }
+}
+function grLoop(now){
+  if(!GR.run)return;
+  const dt=Math.min((now-GR.last)/1000,0.05); GR.last=now; GR.t+=dt;
+  GR.speed=180+GR.t*9;
+  GR.dist+=GR.speed*dt/22;
+  $('#gr-score').textContent=Math.floor(GR.dist);
+  // физика хряка
+  GR.pig.vy+=1700*dt; GR.pig.y=Math.min(GR.ground,GR.pig.y+GR.pig.vy*dt);
+  // спавн препятствий
+  GR.nextObs-=dt;
+  if(GR.nextObs<=0){
+    GR.obs.push({x:GR.W+40,emo:GR_OBS[Math.floor(Math.random()*GR_OBS.length)]});
+    GR.nextObs=0.9+Math.random()*1.1-Math.min(GR.t/60,0.4);
+  }
+  const ctx=GR.ctx,W=GR.W,H=GR.H;
+  ctx.clearRect(0,0,W,H);
+  // небо-закат
+  const sky=ctx.createLinearGradient(0,0,0,GR.ground);
+  sky.addColorStop(0,'#241830'); sky.addColorStop(1,'#3A1E52');
+  ctx.fillStyle=sky; ctx.fillRect(0,0,W,GR.ground);
+  // облака
+  ctx.font='28px serif'; ctx.globalAlpha=.5;
+  for(const c of GR.clouds){
+    c.x-=GR.speed*0.15*c.s*dt; if(c.x<-40)c.x=W+40;
+    ctx.fillText('☁️',c.x,c.y);
+  }
+  ctx.globalAlpha=1;
+  // грязевая трасса
+  ctx.fillStyle='#4a3222'; ctx.fillRect(0,GR.ground,W,H-GR.ground);
+  ctx.strokeStyle='#5d4030'; ctx.lineWidth=3;
+  const off=(GR.dist*22)%60;
+  for(let x=-off;x<W;x+=60){
+    ctx.beginPath(); ctx.moveTo(x,GR.ground+18); ctx.lineTo(x+30,GR.ground+18); ctx.stroke();
+  }
+  // хряк с наездником
+  ctx.font='52px serif'; ctx.textAlign='center'; ctx.textBaseline='bottom';
+  const px=84, py=GR.pig.y;
+  ctx.save(); ctx.translate(px,py); ctx.scale(-1,1); ctx.fillText('🐖',0,6); ctx.restore();
+  ctx.font='26px serif'; ctx.fillText('🤠',px+4,py-34);
+  // препятствия + коллизии
+  ctx.font='44px serif';
+  for(let i=GR.obs.length-1;i>=0;i--){
+    const o=GR.obs[i]; o.x-=GR.speed*dt;
+    ctx.fillText(o.emo,o.x,GR.ground+6);
+    if(o.x<-50){GR.obs.splice(i,1);continue;}
+    if(Math.abs(o.x-px)<30 && GR.ground-GR.pig.y<34){ grEnd(); return; }
+  }
+  GR.raf=requestAnimationFrame(grLoop);
+}
+function grEnd(){
+  GR.run=false; hap('heavy');
+  const m=Math.floor(GR.dist), reward=m*2;
+  const best=+localStorage.getItem('gr_best')||0;
+  if(m>best) localStorage.setItem('gr_best',m);
+  $('#gr-overlay').classList.remove('hidden');
+  $('#gr-result').classList.remove('hidden');
+  $('#gr-result').textContent=`${m} м · +${fmt(reward)} 🏋${m>best?' · рекорд!':''}`;
+  $('#gr-start').textContent='Ещё раз';
+  const claim=$('#gr-claim');
+  claim.classList.remove('hidden');
+  claim.textContent=`Забрать ${fmt(reward)} 🏋`;
+  claim.onclick=()=>{ S.gym+=reward; save(); rHome(); toast(`+${fmt(reward)} 🏋 — Дикие скачки`); hap('heavy'); grIntro(); };
+}
+$('#gr-start').addEventListener('click',grStart);
+$('#gr-canvas').addEventListener('pointerdown',grJump);
 
 /* ---------- init ---------- */
 rHome();rTasks('soc');rFriends();rDonate();rEvents();rVotes();rVs();rEnergy();rNFT();
